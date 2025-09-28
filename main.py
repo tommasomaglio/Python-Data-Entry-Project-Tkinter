@@ -4,12 +4,33 @@ import openpyxl
 
 page = tk.Tk()
 
+def insert_row():
+    type = jeweltype.get()
+    material = jewelmaterial.get()
+    gender = jewelgender.get()
+    stockcheck = "In Stock" if var.get() else "Sold Out"
+
+    path = "C:\\Users\\tomma\\Desktop\\Repos\\Python-Data-Entry-Project-Tkinter\\jewel-project.xlsx"
+    workbook = openpyxl.load_workbook(path)
+    sheet = workbook.active
+    row_val = [type, material, gender, stockcheck]
+    sheet.append(row_val)
+    workbook.save(path)
+
+    excelview.insert('', tk.END, values=row_val)
+
+    jeweltype.delete(0,"end")
+    jewelmaterial.delete(0,"end")
+    jewelgender.delete(0,"end")
+    jeweltype.insert(0, "Jewel Type")
+    jewelmaterial.insert(0, "Jewel Material")
+    jewelgender.insert(0,  "Gender")
+    insert_button.state(["!selected"])
 
 def load_data():
     path = "C:\\Users\\tomma\\Desktop\\Repos\\Python-Data-Entry-Project-Tkinter\\jewel-project.xlsx"
     workbook = openpyxl.load_workbook(path)
     sheet = workbook.active
-
     
     rows = [r for r in sheet.values if any(r)]
     if len(rows) < 2:  
@@ -17,7 +38,6 @@ def load_data():
     
     headers = [h for h in rows[0] if h is not None]
     excelview["columns"] = headers
-
     
     for col in headers:
         excelview.heading(col, text=col, anchor="w")
@@ -25,7 +45,6 @@ def load_data():
 
     
     for row in rows[1:]:
-        
         clean_row = [cell if cell is not None else "" for cell in row[:len(cols)]]
         excelview.insert("", "end", values=clean_row)
 
@@ -54,23 +73,23 @@ types_of_jewels = ['Earring', 'Watch', 'Bracelet', 'Necklace', 'Other']
 materials_of_jewels = ['Gold', 'Silver', 'Bronze', 'Metal', 'Titanium', 'Other']
 genders_for_jewels = ['Male', 'Female', 'Unisex']
 
-jewel_type = ttk.Combobox(data_insert_frame, values=types_of_jewels)
-jewel_type.insert(0, 'Jewel Type')
-jewel_type.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
+jeweltype = ttk.Combobox(data_insert_frame, values=types_of_jewels)
+jeweltype.insert(0, 'Jewel Type')
+jeweltype.grid(row=0, column=0, sticky="ew", padx=5, pady=5)
 
-jewel_material = ttk.Combobox(data_insert_frame, values=materials_of_jewels)
-jewel_material.insert(0, 'Jewel Material')
-jewel_material.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
+jewelmaterial = ttk.Combobox(data_insert_frame, values=materials_of_jewels)
+jewelmaterial.insert(0, 'Jewel Material')
+jewelmaterial.grid(row=1, column=0, sticky="ew", padx=5, pady=5)
 
-jewel_gender = ttk.Combobox(data_insert_frame, values=genders_for_jewels)
-jewel_gender.insert(0, 'Gender')
-jewel_gender.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
+jewelgender = ttk.Combobox(data_insert_frame, values=genders_for_jewels)
+jewelgender.insert(0, 'Gender')
+jewelgender.grid(row=2, column=0, sticky="ew", padx=5, pady=5)
 
 var = tk.BooleanVar()
 in_stock_check = ttk.Checkbutton(data_insert_frame, text="In Stock", variable=var)
 in_stock_check.grid(row=3, column=0, sticky="nsew", padx=5, pady=5)
 
-insert_button = ttk.Button(data_insert_frame, text='Insert')
+insert_button = ttk.Button(data_insert_frame, text='Insert', command=insert_row)
 insert_button.grid(row=4, column=0, sticky="nsew", padx=5, pady=5)  
 
 separator = ttk.Separator(data_insert_frame)
