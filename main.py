@@ -1,7 +1,37 @@
 import tkinter as tk
 from tkinter import ttk
+import openpyxl 
 
 page = tk.Tk()
+
+
+def load_data():
+    path = "C:\\Users\\tomma\\Desktop\\Repos\\Python-Data-Entry-Project-Tkinter\\jewel-project.xlsx"
+    workbook = openpyxl.load_workbook(path)
+    sheet = workbook.active
+
+    
+    rows = [r for r in sheet.values if any(r)]
+    if len(rows) < 2:  
+        return
+    
+    headers = [h for h in rows[0] if h is not None]
+    excelview["columns"] = headers
+
+    
+    for col in headers:
+        excelview.heading(col, text=col, anchor="w")
+        excelview.column(col, width=100, anchor="w")
+
+    
+    for row in rows[1:]:
+        
+        clean_row = [cell if cell is not None else "" for cell in row[:len(cols)]]
+        excelview.insert("", "end", values=clean_row)
+
+        
+        
+
 
 def switch_toggle():
     if style_switch.instate(["selected"]):
@@ -63,7 +93,8 @@ excelview.column("Type", width=100)
 excelview.column("Material", width=100)
 excelview.column("Gender", width=100)
 excelview.column("Status", width=100)
-
 scrollbar.config(command=excelview.yview)
+
+load_data()
 
 page.mainloop()
